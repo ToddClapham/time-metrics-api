@@ -10,6 +10,7 @@
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
       "sourceMap": true,
+      "skipLibCheck": true, // for GitHub actions deployment
       "esModuleInterop": true,
       "strict": true,
    }

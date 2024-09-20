@@ -23,7 +23,7 @@ This project is a service for tracking a user's stats for a particular course on
 5. Start the service: `npm start`
 6. Service is now running at `localhost:3000`
 
-### Using GitHub Actions
+### Using GitHub Actions (requires rsync to be installed on the machine)
 - Workflow in the .github/workflows folder will deploy to a linux VM when code is pushed to the `dev` branch
 - To modify this for your own use:
   1. Fork the repository to your own GitHub page
