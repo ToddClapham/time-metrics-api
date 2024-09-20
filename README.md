@@ -21,7 +21,7 @@ This project is a service for tracking a user's stats for a particular course on
 3. Create `.env` file based on `example.env`
 4. Install dependencies: `npm install`
 5. Start the service: `npm start`
-6. Go to localhost:3000
+6. Service is now running at `localhost:3000`
 
 ### Using GitHub Actions
 - Workflow in the .github/workflows folder will deploy to a linux VM when code is pushed to the `dev` branch
