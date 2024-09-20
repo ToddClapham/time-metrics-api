@@ -1,0 +1,38 @@
+name: ts-deploy-to-dev
+on: 
+  push:
+    branches:
+      - dev
+jobs: 
+  build:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy to server
+        uses: easingthemes/ssh-deploy@v5.0.3
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ vars.REMOTE_HOST }}
+          REMOTE_USER: ${{ vars.REMOTE_USER }}
+          TARGET: ${{ vars.REMOTE_TARGET }}
+          SOURCE: "build package.json"
+          SCRIPT_AFTER: |
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+            cd ${{ vars.REMOTE_TARGET }}
+            npm install --omit=dev
+            pm2 restart ${{ vars.PM2_NAME }}
