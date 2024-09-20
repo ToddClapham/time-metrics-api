@@ -28,9 +28,28 @@ app.use('*', (req: Request, res: Response, next: NextFunction) => {
 // Function to start the server
 export const startServer = async (dataSource: DataSource) => {
     await dataSource.initialize()
-    return app.listen(port, () => {
+    const server = app.listen(port, () => {
         console.log(`Server running on port ${port}`);
     });
+
+    // Graceful shutdown
+    const gracefulShutdown = async () => {
+        console.log('Received shutdown signal, closing server...');
+        server.close(async (err) => {
+            if (err) {
+                console.error('Error closing server:', err);
+                process.exit(1);
+            }
+            await dataSource.destroy();
+            console.log('Server and database connections closed.');
+            process.exit(0);
+        });
+    };
+
+    process.on('SIGINT', gracefulShutdown);
+    process.on('SIGTERM', gracefulShutdown);
+
+    return server;
 };
 
 // Export the app for testing
@@ -40,3 +59,4 @@ export default app;
 if (require.main === module) {
     startServer(dataSource);
 }
+
