@@ -1,14 +1,3 @@
-import { dataSource } from "./data-source";
-import { CourseEntity } from "./entities/course.entity";
-import { SessionEntity } from "./entities/session.entity";
-import { CourseService } from "./services/course.service";
-import { SessionService } from "./services/session.service";
+import { TimeService } from "./services/time.service";
 
-export const courseService = new CourseService(
-    dataSource.getRepository(CourseEntity),
-    dataSource.getRepository(SessionEntity),
-);
-
-export const sessionService = new SessionService(
-    dataSource.getRepository(SessionEntity),
-);
+export const timeService = new TimeService();

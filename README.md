@@ -1,27 +1,21 @@
-# Stats Service
+# Time Metrics Service
 
 ## Description
-This project is a service for tracking a user's stats for a particular course on a learning platform. The service provides capabilities to persist new stats and fetch aggregated stats for a course.
+This project is a service for getting the current time in epoch seconds as well as the Prometheus metrics.
 
 ## API Endpoints
-- `POST /api/courses`: Persists a new course.
-- `POST /api/courses/{courseId}`: Persists a session study event.
-- `GET  /api/courses/{courseId}`: Fetches course lifetime stats.
-- `GET  /api/courses/{courseId}/sessions/{sessionId}`: Fetches a single study session.
-
-## Assumptions
-- The service assumes that the user is authenticated and the `userId` is provided in the request headers.
-- The service uses SQLite as the database.
+- `GET /time`: Returns the current epoch time in seconds.
+- `GET /metrics`: Returns the Prometheus metrics for the application.
 
 ## Installation 
 
 ### For running locally
 1. Clone the repository: `git clone <repository-url>`
-2. Navigate to stats-service: `cd /path/to/stats-service`
+2. Navigate to time-metrics-service: `cd /path/to/time-metrics-service`
 3. Create `.env` file based on `example.env`
 4. Install dependencies: `npm install`
 5. Start the service: `npm start`
-6. Service is now running at `localhost:3000`
+6. Service is now running at `localhost:3000` or whichever port you defined in the `.env` file
 
 ### Using GitHub Actions (requires rsync to be installed on the machine)
 - Workflow in the .github/workflows folder will deploy to a linux VM when code is pushed to the `dev` branch

@@ -1,18 +1,30 @@
 import 'reflect-metadata';  // Import reflect-metadata before anything else
 import express, { Request, Response, NextFunction } from 'express';
 import { getEnvVariable } from './env';
+
 import apiRoutes from './routes/api.routes';
-import { DataSource } from 'typeorm';
-import { dataSource } from './data-source';
+
+import prometheusMiddleware from 'express-prometheus-middleware';
+import authMiddleware from './middleware/auth.middleware';
+import ErrorMessage from './util/ErrorMessage';
 
 const app = express();
-const port = getEnvVariable('port');
+const port = getEnvVariable('port') || 3000;
 
-app.use('/api', apiRoutes);
+app.use(authMiddleware.authenticate);
+
+app.use(prometheusMiddleware({
+    metricsPath: '/metrics',
+    collectDefaultMetrics: true,
+    requestDurationBuckets: [0.1, 0.5, 1, 1.5]
+}));
+
+app.use(apiRoutes);
 
 // error handler
-app.use((error: any, req: Request, res: Response, next: NextFunction) => {
-    if (error.customErrorMessage) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+app.use((error: Error | ErrorMessage, req: Request, res: Response, next: NextFunction) => {
+    if (error instanceof ErrorMessage) {
         res.status(error.httpStatus).send({message: error.message});
     } else {
         console.log('Server error', error);
@@ -21,13 +33,13 @@ app.use((error: any, req: Request, res: Response, next: NextFunction) => {
 });
 
 // 404 handler
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use('*', (req: Request, res: Response, next: NextFunction) => {
     res.status(404).send({error: 'Route not found'});
 });
 
 // Function to start the server
-export const startServer = async (dataSource: DataSource) => {
-    await dataSource.initialize()
+export const startServer = async () => {
     const server = app.listen(port, () => {
         console.log(`Server running on port ${port}`);
     });
@@ -35,13 +47,12 @@ export const startServer = async (dataSource: DataSource) => {
     // Graceful shutdown
     const gracefulShutdown = async () => {
         console.log('Received shutdown signal, closing server...');
-        server.close(async (err) => {
+        server.close((err) => {
             if (err) {
                 console.error('Error closing server:', err);
                 process.exit(1);
             }
-            await dataSource.destroy();
-            console.log('Server and database connections closed.');
+            console.log('Server closed.');
             process.exit(0);
         });
     };
@@ -57,6 +68,5 @@ export default app;
 
 // Only start the server if this file is run directly
 if (require.main === module) {
-    startServer(dataSource);
+    startServer();
 }
-
