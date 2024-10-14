@@ -1,5 +1,6 @@
 import 'reflect-metadata';  // Import reflect-metadata before anything else
 import express, { Request, Response, NextFunction } from 'express';
+import cors from 'cors';  // Import cors
 import { getEnvVariable } from './env';
 
 import apiRoutes from './routes/api.routes';
@@ -9,7 +10,12 @@ import authMiddleware from './middleware/auth.middleware';
 import ErrorMessage from './util/ErrorMessage';
 
 const app = express();
-const port = getEnvVariable('port') || 3000;
+const port = getEnvVariable('port');
+
+app.use(cors({
+    origin: getEnvVariable('corsOrigin'),
+    optionsSuccessStatus: 200
+}));  // Use cors middleware
 
 app.use(authMiddleware.authenticate);
 

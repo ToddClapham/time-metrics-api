@@ -10,6 +10,7 @@
    "author": "Todd Clapham",
    "license": "ISC",
    "dependencies": {
+      "cors": "^2.8.5",
       "dotenv": "^16.4.5",
       "express": "^4.21.1",
       "express-prometheus-middleware": "^1.2.0",
@@ -19,6 +20,7 @@
    },
    "devDependencies": {
       "@eslint/js": "^9.12.0",
+      "@types/cors": "^2.8.17",
       "@types/eslint__js": "^8.42.3",
       "@types/express": "^5.0.0",
       "@types/express-prometheus-middleware": "^1.2.3",
